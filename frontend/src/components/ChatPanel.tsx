@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ChatMessage, BrandStrategy, PageSection } from '../types/brand';
+import { ChatMessage, BrandStrategy } from '../types/brand';
 import { Send, Palette, Layers, Sparkles } from 'lucide-react';
 
 interface ChatPanelProps {

@@ -3,26 +3,29 @@ import { PageSection, BrandStrategy } from '../types/brand';
 import { RenderSection } from './TemplateRegistry';
 import { Monitor, Smartphone, Download } from 'lucide-react';
 
-interface CanvasPreviewProps {
+type CanvasPreviewProps = {
   layout: PageSection[];
   brand: BrandStrategy | null;
-}
+};
 
 export const CanvasPreview: React.FC<CanvasPreviewProps> = ({ layout, brand }) => {
   const [viewMode, setViewMode] = React.useState<'desktop' | 'mobile'>('desktop');
 
-  if (!brand || layout.length === 0) {
+  if (!brand || !layout || layout.length === 0) {
     return (
       <div className="flex-1 bg-slate-950 flex flex-col items-center justify-center text-slate-500 p-8 text-center">
         <Monitor className="w-12 h-12 mb-4 text-slate-700" />
         <h3 className="text-xl font-bold text-slate-300 mb-2">Live Interactive Canvas</h3>
-        <p className="max-w-md text-sm">Enter your startup or product idea in the chat panel to generate a live, animated brand system and landing page.</p>
+        <p className="max-w-md text-sm">Use the chat panel to generate a brand and landing page layout.</p>
       </div>
     );
   }
 
   const exportHTML = () => {
-    const html = `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${brand.name} - Export</title><style>body{font-family:system-ui;background:${brand.bg_color};color:${brand.primary_color};padding:24px}</style></head><body>${layout.map(s => `<section><h2>${s.content.headline || s.content.title || ''}</h2><p>${s.content.subheadline || ''}</p></section>`).join('')}</body></html>`;
+    const htmlSections = layout
+      .map((s) => `<section><h2>${s.content.headline || s.content.title || ''}</h2><p>${s.content.subheadline || ''}</p></section>`)
+      .join('');
+    const html = `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${brand.name} - Export</title><style>body{font-family:system-ui;background:${brand.bg_color};color:${brand.primary_color};padding:24px}</style></head><body>${htmlSections}</body></html>`;
     const blob = new Blob([html], { type: 'text/html' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -36,9 +39,9 @@ export const CanvasPreview: React.FC<CanvasPreviewProps> = ({ layout, brand }) =
     <div className="flex-1 bg-slate-950 flex flex-col h-full overflow-hidden">
       <div className="h-12 bg-slate-900 border-b border-slate-800 flex items-center justify-between px-4 text-slate-400 text-xs">
         <div className="flex items-center gap-2">
-          <span className="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+          <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
           <span className="font-semibold text-slate-200">{brand.name}</span>
-          <span className="opacity-50">| {brand.heading_font} & {brand.body_font}</span>
+          <span className="opacity-50">| {brand.heading_font} &amp; {brand.body_font}</span>
         </div>
         <div className="flex items-center gap-3">
           <div className="flex bg-slate-800 rounded-lg p-0.5">
@@ -61,10 +64,7 @@ export const CanvasPreview: React.FC<CanvasPreviewProps> = ({ layout, brand }) =
             <RenderSection key={sec.id} section={sec} brand={brand} />
           ))}
           <div className="p-4 border-t">
-            <button
-              onClick={exportHTML}
-              className="mt-4 inline-block px-4 py-2 bg-indigo-600 text-white rounded-lg"
-            >
+            <button onClick={exportHTML} className="mt-4 inline-block px-4 py-2 bg-indigo-600 text-white rounded-lg">
               Export HTML
             </button>
           </div>
